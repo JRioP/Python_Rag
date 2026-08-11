@@ -1,28 +1,31 @@
-# 🧠 Python RAG — Local Document Chatbot
+# 🧠 Python RAG — FastAPI Microservice
 
-A fully offline Retrieval-Augmented Generation (RAG) chatbot that lets you chat with your own documents. No API keys. No internet. Just your files and a local LLM.
+A Retrieval-Augmented Generation (RAG) backend service that lets you chat with your own documents. This project wraps a LangChain pipeline in a FastAPI server, utilizing a local ChromaDB vector store and lightning-fast cloud inference via the Groq API.
 
 ---
 
 ## ✨ Features
 
-- 📄 Supports **PDF, DOCX, TXT, and XLSX** files
-- 🔍 Semantic search using **HuggingFace Embeddings** (`all-MiniLM-L6-v2`)
-- 🗄️ Persistent vector store with **ChromaDB**
-- 🤖 Powered by **Ollama** (Llama 3.2) — runs 100% locally
-- ⚡ Auto-loads existing vector store on rerun (no re-embedding needed)
-- 🌀 Loading spinner for a clean chat experience
+- 🌐 **RESTful API**: Exposes `/chat` and `/health` endpoints using FastAPI.
+- 🚀 **Cloud Inference**: Powered by **Groq** (`llama-3.1-8b-instant`) for extremely fast, production-ready responses.
+- 📄 **Multi-Format Support**: Reads PDF, DOCX, TXT, and XLSX files.
+- 🔍 **Semantic Search**: Uses HuggingFace Embeddings (`all-MiniLM-L6-v2`).
+- 🗄️ **Persistent Vector Store**: Auto-loads existing ChromaDB on startup (no re-embedding needed).
+- ☁️ **Deployment Ready**: Includes a `Procfile` and structured for seamless cloud hosting (e.g., Railway).
 
 ---
 
 ## 🗂️ Project Structure
 
-```
 My_RAG/
-├── docs/            # 📁 Put your documents here
-├── chroma_db/       # 🗄️ Auto-generated vector store
-└── rag.py           # 🤖 Main script
-```
+└── rag-api/
+    ├── docs/              # 📁 Put your documents here
+    ├── chroma_db/         # 🗄️ Auto-generated vector store
+    ├── main.py            # 🌐 FastAPI server & endpoints
+    ├── rag.py             # 🤖 LangChain & ChromaDB logic
+    ├── requirements.txt   # 📦 Dependencies for deployment
+    ├── Procfile           # ☁️ Cloud deployment config
+    └── .env               # 🔑 Your Groq API key (not tracked in Git)
 
 ---
 
@@ -31,64 +34,77 @@ My_RAG/
 ### 1. Prerequisites
 
 - Python 3.9+
-- [Ollama](https://ollama.com/) installed and running
-- Llama 3.2 model pulled:
+- A free API key from [Groq Console](https://console.groq.com/)
 
-```bash
-ollama pull llama3.2
-```
+### 2. Set Up the Environment
 
-### 2. Install Dependencies
+Navigate to the API folder and install the required dependencies:
 
-```bash
-pip install langchain langchain-community langchain-huggingface langchain-ollama chromadb sentence-transformers pandas openpyxl docx2txt pypdf
-```
+cd rag-api
+pip install -r requirements.txt
 
-### 3. Add Your Documents
+*(If you are setting this up manually without the requirements file, run: `pip install fastapi uvicorn pydantic langchain langchain-groq langchain-chroma pandas openpyxl langchain-community pypdf docx2txt langchain-huggingface sentence-transformers python-dotenv`)*
 
-Drop your files into the `docs/` folder:
+### 3. Configure API Keys
 
-```
+Create a `.env` file inside the `rag-api/` directory and add your Groq API key:
+
+GROQ_API_KEY=gsk_your_actual_key_here
+
+### 4. Add Your Documents
+
+Drop your files into the `rag-api/docs/` folder:
+
 docs/
-├── report.pdf
-├── notes.docx
-├── data.xlsx
-└── readme.txt
-```
+├── appraisal.pdf
+├── training_plan.xlsx
+└── weekly_journal.pdf
 
-### 4. Run the Chatbot
+### 5. Start the Server
 
-```bash
-python rag.py
-```
+Run the FastAPI server using Uvicorn:
 
-On first run, it will embed your documents and save them to `chroma_db/`. On subsequent runs, it loads instantly.
+uvicorn main:app --reload
+
+On the first run, the server will embed your documents and save them to `chroma_db/`. On subsequent runs, it loads instantly into memory.
 
 ---
 
-## 💬 Usage
+## 💬 Usage & Testing
 
-```
-✅ RAG system ready! Type your question (or 'quit' to exit)
+Because this is an API, there is no terminal chat loop. You interact with it via HTTP requests.
 
-You: What is the summary of the report?
-🤔 Thinking... ⠋
-AI: The report discusses...
+### Test via Swagger UI (Browser)
+FastAPI automatically generates an interactive testing dashboard.
+1. Open your browser to `http://127.0.0.1:8000/docs`
+2. Expand the **POST `/chat`** endpoint.
+3. Click **Try it out**, enter your question in the JSON body, and click **Execute**.
 
-You: quit
-```
+### Test via cURL (Terminal)
+
+curl -X POST "http://127.0.0.1:8000/chat" \
+     -H "Content-Type: application/json" \
+     -d "{\"question\": \"What is the summary of the report?\"}"
+
+
+**Example Response:**
+
+{
+  "answer": "Based on the provided context, the report discusses..."
+}
+
 
 ---
 
 ## ⚙️ Configuration
 
-You can change these settings at the top of `rag.py`:
+You can adjust these settings at the top of `rag-api/rag.py`:
 
 | Variable | Default | Description |
 |---|---|---|
 | `DOCS_FOLDER` | `./docs` | Folder containing your documents |
 | `DB_FOLDER` | `./chroma_db` | Where the vector store is saved |
-| `MODEL` | `llama3.2:latest` | Ollama model to use |
+| `MODEL` | `llama-3.1-8b-instant` | Groq model used for inference |
 
 ---
 
@@ -96,10 +112,11 @@ You can change these settings at the top of `rag.py`:
 
 | Tool | Purpose |
 |---|---|
+| [FastAPI](https://fastapi.tiangolo.com/) | Web framework for the API |
 | [LangChain](https://www.langchain.com/) | RAG pipeline & document loading |
-| [ChromaDB](https://www.trychroma.com/) | Local vector store |
+| [Groq](https://groq.com/) | High-speed LLM inference |
+| [ChromaDB](https://www.trychroma.com/) | Local vector database |
 | [HuggingFace](https://huggingface.co/) | Text embeddings (`all-MiniLM-L6-v2`) |
-| [Ollama](https://ollama.com/) | Local LLM inference |
 
 ---
 
