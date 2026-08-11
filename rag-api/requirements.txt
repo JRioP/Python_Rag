@@ -4,3 +4,11 @@ pydantic
 langchain
 langchain-groq
 langchain-chroma
+pandas
+openpyxl
+langchain-community
+pypdf
+docx2txt
+langchain-huggingface
+sentence-transformers
+python-dotenv
