@@ -1,0 +1,112 @@
+---
+slug: "roadrescue"
+title: "RoadRescue"
+description: "Real-time Android roadside assistance app — connects stranded motorists with nearby verified service providers via live GPS tracking, automated matching, and secure payments."
+date: 2025-05-01
+tags: ["Java", "Firebase", "Firestore", "Cloud Functions", "Google Maps SDK", "OAuth 2.0", "AES-256", "Room Database", "Retrofit", "Figma"]
+category: android
+featured: true
+status: capstone
+role: "Lead Developer (Frontend + Backend)"
+githubUrl: "https://github.com/JRioP/RoadRescue"
+coverImage: "/images/projects/roadrescue-cover.png"
+---
+
+## Overview
+
+**RoadRescue** is a native Android roadside assistance system built as my BSIT capstone at
+STI College Tanauan. It connects stranded motorists with nearby verified service providers
+in real time — solving a genuine problem in the Philippine transport landscape where traditional
+roadside help is slow, uncoordinated, and opaque.
+
+Whether you're dealing with a flat tire, dead battery, or engine breakdown, RoadRescue puts
+help one tap away with live provider tracking and a full payment pipeline.
+
+- **72 commits** across the project lifecycle
+- **100% Java** — native Android, no cross-platform shortcuts
+- **3 contributors** — I served as Lead Developer (Frontend + Backend)
+
+## The problem
+
+Traditional roadside assistance in the Philippines suffers from three systemic failures:
+
+- **Slow dispatch** — providers are called manually with no real-time coordination
+- **Zero visibility** — motorists have no idea where help is or when it will arrive
+- **No accountability** — no standardized way to verify, rate, or track service providers
+
+## Key features
+
+### For motorists
+
+- **One-tap service requests** — Towing, Flat Tire Repair, Battery Jump-start, Fuel Delivery, Lockout
+- **Real-time GPS tracking** — live provider location with accurate ETA via Google Maps SDK
+- **Flexible payments** — cash and cashless with digital receipts
+- **Offline mode** — cached maps and emergency contacts work without internet
+- **Emergency SOS** — instantly alerts emergency contacts and local authorities with precise GPS coordinates
+- **Multilingual** — full English and Tagalog support
+
+### For service providers
+
+- **Real-time job alerts** — receive and accept nearby requests instantly
+- **Route optimization** — integrated navigation to reach the client fastest
+- **Reputation system** — build trust through verified ratings and reviews
+
+## How it works
+
+1. **Request** — motorist selects a service type and confirms their GPS location via Fused Location Provider
+2. **Matching** — Cloud Function queries Firestore for providers with `available: true`, calculates distance using the **Haversine formula**, and dispatches an FCM push notification to the nearest one
+3. **Acceptance** — provider accepts the job; both parties begin live tracking via Firestore `onSnapshot()` listeners
+4. **Tracking** — motorist sees provider moving on the map in real time with a live ETA
+5. **Completion** — service rendered, payment processed, both parties rate the experience
+
+## Tech stack
+
+- **Frontend:** Java, XML Layouts, Android Studio, Material Design, Figma
+- **Backend:** Firebase Auth, Firestore NoSQL, Firebase Realtime DB, Cloud Functions for Firebase
+- **APIs:** Google Maps SDK, Fused Location Provider, Retrofit, FCM (push notifications)
+- **Security:** AES-256 encryption (local user data), OAuth 2.0 (Google Sign-In), Android Keystore, Firebase Security Rules
+- **Offline:** Room Database (local cache), Firestore offline persistence, SharedPreferences
+
+## Tech decisions
+
+**Why Firebase over a custom REST backend?**
+
+RoadRescue requires bidirectional real-time updates — when a motorist requests help, the
+nearest provider must be notified instantly, and the motorist must see the provider's GPS
+position update live. Firebase Firestore's `onSnapshot()` listeners push data to the client
+the moment it changes — no polling, no delay. Building equivalent infrastructure with a
+custom REST API would require WebSockets or Server-Sent Events, adding significant
+backend complexity for a capstone timeline.
+
+**Why Cloud Functions for matching?**
+
+The provider matching logic (Haversine calculation, availability check, FCM dispatch) must
+run server-side so it can't be manipulated by the client. Cloud Functions let me run this
+logic without managing a server — the function triggers on a Firestore write and handles
+the full matching flow atomically.
+
+**Why AES-256 + Android Keystore?**
+
+Sensitive user data cached on-device (name, contact number, vehicle details) is encrypted
+with AES-256. The key is stored in Android Keystore, which ties it to the device hardware
+and prevents extraction even if the device is physically compromised.
+
+## My role
+
+I was **lead developer** responsible for the entire technical architecture:
+
+- Designed the Firestore data model (users, providers, requests, ratings)
+- Built the Android frontend — all screens, navigation, Maps SDK integration, real-time listeners
+- Wrote all Cloud Functions (matching algorithm, FCM dispatch, payment confirmation)
+- Implemented AES-256 encryption, OAuth 2.0, and Firebase Security Rules
+- Configured offline persistence (Room Database + Firestore cache)
+- Signed and released the production APK
+
+My teammates: **Jemimah Sumague** (QA testing and research) and **Winnely Mae Espinas** (project management and UI/UX wireframes in Figma).
+
+## What I'd change
+
+- **Add automated tests** — zero test coverage currently; I'd add unit tests for the matching algorithm and integration tests for the Firebase flows
+- **Migrate relational data to PostgreSQL** — provider ratings, transaction history, and audit logs are inherently relational; Firestore's document model made some queries awkward
+- **Split motorist and provider into separate apps** — the dual-role APK saves development time but creates maintenance complexity as features grow
+- **Add proper error boundaries** — network failures during the matching flow need more graceful handling than the current implementation provides

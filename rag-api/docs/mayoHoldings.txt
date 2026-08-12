@@ -1,0 +1,104 @@
+---
+slug: "mayo-holdings"
+title: "MaYo Holdings and Construction, Inc. Corporate Website"
+description: "Full corporate website built and deployed from local staging to production — 87/100 audit score, A+ security rating, SEO 100/100."
+date: 2026-05-01
+tags: ["WordPress", "PHP", "Elementor", "WP Super Cache", "Wordfence WAF", "Cloudflare", "WPCode", "WPForms"]
+category: web
+featured: true
+status: production
+role: "IT Intern (OJT — MHCI MITSD)"
+githubUrl: ""
+liveUrl: "https://landing.mayogroup.biz"
+coverImage: "/images/projects/mayo-cover.png"
+---
+
+## Overview
+
+Full corporate website for MaYo Holdings and Construction, Inc. — built
+end-to-end during OJT, from local NAS staging to live Namecheap cPanel
+hosting. The project spanned 6 pages, 8 department email routing targets,
+and a full production deployment with Cloudflare CDN.
+
+**Final audit score trajectory:** 61 → 66 → 70 → 74 → 76 → 78 → 80 → **87/100 (B+)**
+
+## Tech stack
+
+- **CMS:** WordPress 6.8
+- **PHP:** 8.2.21
+- **Database:** MariaDB 10.11.11
+- **Web Server:** Apache 2.4.58
+- **Page Builder:** Elementor 4.0.6
+- **Caching:** WP Super Cache 3.1.0
+- **Security:** Wordfence 8.2.0 + Cloudflare
+- **Email:** WP Mail SMTP (Gmail OAuth)
+- **SEO:** SureRank SEO 1.7.1
+- **CDN / SSL:** Cloudflare
+
+## What was built
+
+Six fully live pages, all SureRank SEO optimized:
+
+- **Home** — Hero, animated stats counter, services grid, founders section, featured projects
+- **About** — Company profile, founders story, executive bios, principles, objectives
+- **Services** — 8 service cards with CTA buttons and JS dropdown pre-selection, tabbed gallery
+- **Projects** — 12 project photo cards with lightbox
+- **Work With Us** — Benefits section (13th Month, HMO Philcare, Maternity/Paternity leave, etc.), job postings
+- **Contact** — Google Maps embed, tap-to-call phone numbers, routed contact form
+
+## Key engineering achievement — PHP email routing system
+
+The most technically complex feature. When a visitor submits the contact
+form, the system:
+
+1. Assigns a unique ticket number (e.g. `MaYo-1007: Juan Cruz`)
+2. Uses **Double-Lock routing** — URL parameter first, then Field 6 keyword match fallback
+3. Routes to the correct department email automatically
+4. Sends an independent plain-text audit backup to the IT email via `wp_mail()` — Phantom Drop protection
+5. Falls back to the default WPForms recipient if no service is matched
+
+This was built using a custom PHP filter hooked into `wpforms_entry_email_to`,
+with an atomic database increment for ticket numbers to prevent race conditions.
+All 3 WPCode snippets must remain active for routing to function.
+
+Each service type routes to a dedicated department email automatically:
+
+- **HVAC & Air Handling** → hvac.dept@mayoholdings.com
+- **Custom Air Ducting** → ducting.dept@mayoholdings.com
+- **Kitchen Exhaust (KES)** → kitchen.dept@mayoholdings.com
+- **Metal & Steel Fabrication** → msf.dept@mayoholdings.com
+- **Mechanical Equipment** → mech.dept@mayoholdings.com
+- **Electrical & Fire Safety** → efs.dept@mayoholdings.com
+- **General Contracting** → gc.dept@mayoholdings.com
+- **Piping & Sanitary Systems** → pss.dept@mayoholdings.com
+- **No selection** → WPForms default recipient (null-state fallback)
+
+## Performance & security results
+
+- **Audit score:** 87/100 (B+) — up from 61 at project start
+- **SEO:** 100/100 via seoptimer.com — all 6 pages optimized
+- **Security:** A+ via securityheaders.com — all 6 headers confirmed (HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, CSP)
+- **SSL/CDN:** Cloudflare — DMARC/SPF confirmed
+- **Caching:** WP Super Cache — page + browser + CDN caching configured
+- **Images:** WebP sitewide via Elementor Image Optimizer
+- **Wordfence:** 0 issues across 19,279 files
+
+## Deployment process
+
+Migrated from local XAMPP to live Namecheap cPanel hosting:
+
+1. Full site export via All-in-One WP Migration
+2. Database search-replace to update all localhost URLs to live domain
+3. WP Mail SMTP Gmail OAuth re-authenticated on live domain
+4. Cloudflare SSL and all 6 security headers configured
+5. Elementor CSS & Data regenerated post-migration
+6. WP Super Cache configured for production caching
+7. All email routing tested end-to-end across all 8 departments
+
+## What I'd improve
+
+- Replace WP Super Cache with LiteSpeed Cache if moved to a LiteSpeed server
+- Add LocalBusiness JSON-LD schema markup for richer Google search results
+- Submit sitemap to Google Search Console
+- Add UptimeRobot monitoring for automated downtime alerts
+- Add category filters to the Projects page using Essential Addons Filterable Gallery

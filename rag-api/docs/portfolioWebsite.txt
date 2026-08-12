@@ -1,0 +1,69 @@
+---
+slug: "porfolio-website"
+title: "Rio Portfolio Website in Next.js"
+description: "A high-performance personal portfolio built with Next.js App Router, featuring MDX-powered project showcases and a serverless contact form."
+date: 2026-07-20
+tags: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Resend API", "MDX"]
+category: web
+featured: true
+status: production
+role: "Full Stack Developer"
+githubUrl: "https://github.com/JRioP/Rio_Joshua_Portfolio"
+liveUrl: "https://joshuario.vercel.app"
+coverImage: "/images/projects/porfolio_website.png"
+---
+
+## Overview
+
+A modern, high-performance personal portfolio designed from the ground up to serve as a central hub for active job hunting and project documentation. Built entirely with Next.js and deployed on Vercel, the architecture leverages static site generation for speed while maintaining dynamic API routes for backend functionality.
+
+## Tech stack
+
+- **Framework:** Next.js (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **Content Management:** MDX (Markdown + JSX)
+- **Email API:** Resend API
+- **Deployment & Hosting:** Vercel
+- **Version Control:** Git / GitHub
+
+## What was built
+
+A fully responsive, statically generated web application featuring:
+
+- **Dynamic Project Showcase:** A scalable project architecture using local MDX files, allowing for rich text, code blocks, and custom components within project case studies (like the MaYo Holdings deployment).
+- **Responsive UI/UX:** Clean, accessible design built with Tailwind CSS, optimized for both desktop and mobile viewing.
+- **Serverless Contact Form:** A custom-built, secure API endpoint that processes user inquiries and handles automated email delivery without requiring a dedicated backend server.
+
+## Key engineering achievement — Serverless Email API Route
+
+The most technically complex feature is the custom Next.js API route (`app/api/contact/route.ts`) built to handle contact form submissions securely.
+
+When a visitor submits a message, the system:
+1. Intercepts the payload and runs strict server-side validation (checking name length, email regex, and message boundaries).
+2. Prevents empty or malicious submissions before they hit the email service.
+3. Securely authenticates with the **Resend API** using environment variables (`RESEND_API_KEY`) to ensure credentials are never exposed to the client.
+4. Routes the validated data, formatting it into a clean, readable text email delivered directly to the primary developer inbox, utilizing the visitor's email as the `reply_to` address for seamless communication.
+
+## Performance & security results
+
+- **Speed:** Near-instant page loads achieved through Next.js static site generation (SSG) and Vercel's Edge Network caching.
+- **Security:** API keys and environment variables are strictly contained on the server-side. The contact API includes robust input validation and error handling (HTTP 400/500 status codes) to prevent malformed requests.
+- **Content Delivery:** MDX files are parsed and transformed at build time, meaning zero database queries are required to render project pages, eliminating a major performance bottleneck.
+
+## Deployment process
+
+Continuous integration and continuous deployment (CI/CD) handled via Vercel:
+
+1. Code is pushed to the primary GitHub repository.
+2. Vercel automatically detects the push and triggers a new build.
+3. MDX files are compiled, TypeScript is type-checked, and Next.js optimizes the assets.
+4. The site is deployed live to `joshuario.vercel.app` with an automatically provisioned SSL certificate.
+
+## What I'd improve
+
+- Integrate the GitHub REST API to dynamically fetch and display live star counts and recent commit activity.
+- Build a custom local GraphQL server to allow advanced filtering of MDX projects by tech stack.
+- Implement a PostgreSQL-backed view counter to track traffic on individual project pages.
+- Add a custom domain and verify it within Resend to enable automated, branded HTML confirmation emails for users who submit the contact form.
+"""

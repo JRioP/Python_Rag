@@ -1,0 +1,40 @@
+---
+slug: "dentavault"
+title: "DentaVault"
+description: "A dental clinic desktop application with patient records, inventory management, appointment tracking, and service billing."
+date: 2026-02-01
+tags: ["C#", ".NET WinForms", "SQL Server", "Visual Studio"]
+category: desktop
+featured: false
+status: personal
+role: "Solo Developer"
+githubUrl: "https://github.com/JRioP/DentaVault"
+coverImage: "/images/projects/dentavault-cover.png"
+---
+
+## Overview
+
+DentaVault is a desktop application built for dental clinic management.
+It handles patient records, appointment scheduling, service billing,
+and inventory tracking — replacing paper-based systems with a structured
+local database.
+
+## Problem
+
+Small dental clinics in the Philippines typically rely on paper records —
+slow to retrieve, prone to errors, and hard to track historically.
+DentaVault replaces that with a proper desktop system built on SQL Server.
+
+## Features
+
+- Patient record management with full history
+- Appointment scheduling and calendar view
+- Service billing with itemized costs per procedure
+- Inventory tracking for dental supplies
+- Secure login with session management
+
+## Tech decisions
+
+Built with C# WinForms and SQL Server — the standard enterprise desktop
+stack in the Philippines. Demonstrates OOP principles, relational database
+design, and CRUD operations outside of web development.

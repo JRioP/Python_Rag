@@ -1,0 +1,109 @@
+---
+slug: "python-rag"
+title: "Python RAG Chatbot"
+description: "Document Q&A chatbot using Retrieval-Augmented Generation — now deployed as a live FastAPI microservice on Railway with Groq + Llama 3.2. Supports PDF, DOCX, TXT, and XLSX."
+date: 2026-02-01
+tags: ["Python", "FastAPI", "LangChain", "ChromaDB", "HuggingFace", "Groq", "Llama 3.2", "Railway", "REST API"]
+category: ai
+featured: true
+status: personal
+role: "Solo Developer"
+githubUrl: "https://github.com/JRioP/Python_Rag"
+liveUrl: "https://pythonrag-production.up.railway.app/docs"
+coverImage: "/images/projects/rag-cover.png"
+---
+
+## Overview
+
+Python RAG Chatbot is a document Q&A system built on
+**Retrieval-Augmented Generation (RAG)** — it answers questions about
+your own documents by retrieving semantically relevant chunks and
+passing them as context to an LLM.
+
+What started as a fully local tool using Ollama has evolved into a
+**live deployed microservice** — a FastAPI backend running on Railway,
+integrated directly into my portfolio as a floating AI assistant.
+
+- **Deployed at:** pythonrag-production.up.railway.app
+- **Integrated into:** joshuario.vercel.app (floating chat widget)
+- **Supports:** PDF, DOCX, TXT, XLSX
+- **LLM:** Llama 3.2 via Groq API (cloud inference, free tier)
+
+## The evolution — local to production
+
+The original version ran entirely offline using Ollama + Llama 3.2 on
+local hardware. This was intentional for privacy — documents never
+left the machine.
+
+The production version replaces Ollama with **Groq's inference API**,
+which serves the same Llama 3.2 model from the cloud at significantly
+faster speeds. The tradeoff is that queries now go through Groq's
+servers — acceptable for a portfolio use case where the documents are
+my own project descriptions.
+
+## Architecture
+Visitor (portfolio) → Next.js /api/chat proxy
+↓ REST API call
+FastAPI server (Railway)
+↓
+LangChain RAG pipeline
+↙ ↘
+ChromaDB Groq API
+(vector store) (Llama 3.2 inference)
+↘ ↙
+streamed answer
+↓
+Next.js → Visitor
+
+The Next.js proxy route (`/api/chat`) sits between the visitor and the
+Railway server — it hides the Railway URL from the client and keeps
+all external API calls server-side.
+
+## How RAG works
+
+1. **Ingestion** — documents are split into overlapping chunks using
+   LangChain's text splitter (chunk size 500, overlap 50)
+2. **Embedding** — each chunk is embedded using HuggingFace's
+   `all-MiniLM-L6-v2` model into a 384-dimensional vector
+3. **Storage** — vectors stored in ChromaDB (persistent, on-disk)
+4. **Retrieval** — user query is embedded and cosine-similarity matched
+   against stored vectors; top-k chunks retrieved
+5. **Generation** — retrieved chunks injected into Llama 3.2 prompt as
+   context via Groq API; model answers from context, not training data
+
+## Tech stack
+
+- **API framework:** FastAPI + Uvicorn
+- **RAG pipeline:** LangChain
+- **Vector store:** ChromaDB
+- **Embeddings:** HuggingFace `all-MiniLM-L6-v2`
+- **LLM:** Llama 3.2 via Groq API
+- **Deployment:** Railway (Python service, auto-deploy from GitHub)
+- **Integration:** Next.js API route proxy → portfolio chat widget
+
+## Why FastAPI?
+
+FastAPI was the natural choice for wrapping the RAG pipeline into a
+REST API — it's Python-native, generates automatic Swagger docs at
+`/docs`, handles async requests cleanly, and deploys easily on Railway
+with a single `Procfile`. The `/chat` endpoint accepts a `POST` request
+with a `question` field and returns the LLM's answer as JSON.
+
+## Why Groq over OpenAI?
+
+Groq serves open-source models (Llama 3.2) at inference speeds
+significantly faster than OpenAI's API — responses typically come back
+in under 2 seconds. The free tier is generous enough for a portfolio
+use case. More importantly, using an open-source model demonstrates
+that AI features don't require expensive proprietary APIs.
+
+## What I'd improve
+
+- Add streaming responses so the answer types out character by character
+  instead of arriving all at once
+- Add conversation memory so follow-up questions have context from
+  previous turns
+- Add document upload via the API so users can query their own files,
+  not just my pre-loaded project descriptions
+- Move ChromaDB to a persistent cloud store (Pinecone or Qdrant) so
+  the vector index survives Railway restarts
