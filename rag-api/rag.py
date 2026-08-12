@@ -72,7 +72,7 @@ else:
 llm = ChatGroq(model=MODEL, temperature=0)
 
 # Set up the retriever and prompt
-retriever = db.as_retriever(search_kwargs={"k": 17})
+retriever = db.as_retriever(search_kwargs={"k": 25})
 
 prompt = ChatPromptTemplate.from_template("""
 Answer the question based only on the following context:
