@@ -11,8 +11,8 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_groq import ChatGroq
 
-DOCS_FOLDER = "./docs"
-DB_FOLDER = "./chroma_db"
+DOCS_FOLDER = "./rag-api/docs"
+DB_FOLDER = "./rag-api/chroma_db"
 MODEL = "llama-3.1-8b-instant"
 
 # Load all documents
