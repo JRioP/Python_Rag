@@ -11,8 +11,8 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_groq import ChatGroq
 
-DOCS_FOLDER = "./rag-api/docs"
-DB_FOLDER = "./rag-api/chroma_db"
+DOCS_FOLDER = "./docs"
+DB_FOLDER = "./chroma_db"
 MODEL = "llama-3.1-8b-instant"
 
 # Load all documents
@@ -25,8 +25,8 @@ def load_documents(folder):
         elif filename.endswith(".docx"):
             docs.extend(Docx2txtLoader(path).load())
         elif filename.endswith(".txt"):
-            docs.extend(TextLoader(path).load())
-        elif filename.endswith(".xlsx") or filename.endswith(".xls"):
+            docs.extend(TextLoader(path, encoding="utf-8").load())
+        elif filename.endswith((".xlsx", ".xls")):
             df = pd.read_excel(path, dtype=str).fillna("")
             df["text"] = df.apply(lambda row: " | ".join(row.values), axis=1)
             loader = DataFrameLoader(df, page_content_column="text")
