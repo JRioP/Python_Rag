@@ -1,30 +1,34 @@
-from fastapi import FastAPI, HTTPException
+import os
+import secrets
+from fastapi import FastAPI, HTTPException, Header, Depends
 from pydantic import BaseModel
 from rag import ask_rag
 
-# Initialize the FastAPI application
 app = FastAPI(title="Portfolio RAG API")
+API_KEY = os.getenv("API_KEY")  # if unset (local dev), the check is skipped
 
-# Define the expected JSON body for the POST request
+
+def verify_key(x_api_key: str | None = Header(default=None)):
+    if API_KEY and not secrets.compare_digest(x_api_key or "", API_KEY):
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+
 class ChatRequest(BaseModel):
     question: str
 
-# Define the expected JSON response
+
 class ChatResponse(BaseModel):
     answer: str
 
-# GET /health for uptime monitoring
+
 @app.get("/health")
 def health_check():
     return {"status": "healthy", "service": "rag-api"}
 
-# POST /chat to handle incoming questions
-@app.post("/chat", response_model=ChatResponse)
+
+@app.post("/chat", response_model=ChatResponse, dependencies=[Depends(verify_key)])
 def chat(request: ChatRequest):
     try:
-        # Call the function you defined in rag.py
-        answer = ask_rag(request.question)
-        return ChatResponse(answer=answer)
+        return ChatResponse(answer=ask_rag(request.question))
     except Exception as e:
-        # Return a clean 500 error if the LangChain pipeline fails
         raise HTTPException(status_code=500, detail=str(e))
