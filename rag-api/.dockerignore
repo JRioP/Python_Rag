@@ -1,0 +1,9 @@
+.env
+chroma_db/
+models/
+docs_private/
+baseline_answers.md
+__pycache__/
+*.pyc
+.venv/
+.git/
