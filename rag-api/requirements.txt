@@ -9,6 +9,5 @@ openpyxl
 langchain-community
 pypdf
 docx2txt
-langchain-huggingface
-sentence-transformers
+fastembed
 python-dotenv
